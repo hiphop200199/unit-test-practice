@@ -12,7 +12,10 @@ class ItemController extends Controller
    {
     return item::select('content')->take(10)->get();
    }
-
+   public function item(item $item)
+   {
+    return $item;
+   }
    public function create(Request $request)
    {
     $content = $request->content;

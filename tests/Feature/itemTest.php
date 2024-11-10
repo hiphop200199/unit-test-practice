@@ -39,6 +39,27 @@ class itemTest extends TestCase
 
     }
 
+     /*
+    呼叫名為item的API，接受GET請求
+    回傳特定編號的item
+    回傳伺服器狀態碼為200 ok
+    回傳資料型態為json
+    回傳資料結構是陣列，包含content為名的key
+    回傳資料筆數為1筆
+    */
+    public function test_should_return_the_chosen_record()
+    {
+        $test_id = 300;
+        item::factory()->create(['content'=>'測試.','id'=>$test_id]);
+        $response = $this->get('/item/'.$test_id);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'content'
+        ]);
+
+        $response->assertJsonCount(1);
+    }
     /*
     呼叫名為create的API，接受POST請求
     認定資料庫內要有一筆['content'=>$test_data['content']]的資料
