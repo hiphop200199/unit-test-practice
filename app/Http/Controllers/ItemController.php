@@ -12,4 +12,11 @@ class ItemController extends Controller
    {
     return item::select('content')->take(10)->get();
    }
+
+   public function create(Request $request)
+   {
+    $content = $request->content;
+    item::create(['content'=>$content]);
+    return response()->json(['message'=>'create success.']) ;
+   }
 }
