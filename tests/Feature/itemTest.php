@@ -98,4 +98,37 @@ class itemTest extends TestCase
 
         $response->assertJsonCount(1);
     }
+
+
+    /*
+    呼叫名為delete的API，接受DELETE請求
+    認定資料庫內應該沒有指定id的資料
+    回傳伺服器狀態碼為200 ok
+    回傳資料型態為json
+    回傳資料結構是陣列，包含message為名的key
+    回傳資料包含['message'=>'delete success.']片段
+    回傳資料筆數為1筆
+    */
+    public function test_should_delete_the_chosen_record()
+    {
+        item::factory(99)->create();
+
+        $test_data = ['id'=>250];
+
+        item::factory()->create(['id'=>$test_data['id']]);
+
+        $response = $this->delete('delete',$test_data);
+
+        item::destroy($test_data['id']);
+
+        $this->assertDatabaseMissing('items',['id'=>$test_data['id']]);
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure(['message']);
+
+        $response->assertJsonFragment(['message'=>'delete success.']);
+
+        $response->assertJsonCount(1);
+    }
 }

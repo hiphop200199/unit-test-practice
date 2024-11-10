@@ -27,4 +27,11 @@ class ItemController extends Controller
     item::where('id','=',$id)->update(['content'=>$content]);
     return response()->json(['message'=>'update success.']) ;
    }
+
+   public function delete(Request $request)
+   {
+    $id = $request->id;
+    item::destroy($id);
+    return response()->json(['message'=>'delete success.']) ;
+   }
 }
