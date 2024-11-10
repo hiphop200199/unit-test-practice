@@ -9,6 +9,9 @@ use Tests\TestCase;
 
 class itemTest extends TestCase
 {
+
+    use RefreshDatabase;
+
     /*
     呼叫名為items的API，接受GET請求
     回傳伺服器狀態碼為200 ok
@@ -17,7 +20,6 @@ class itemTest extends TestCase
     回傳資料結構是物件陣列，每個物件都包含content為名的key
     回傳資料筆數為10筆
     */
-    use RefreshDatabase;
     public function test_should_return_ten_contents_records(): void
     {
         item::factory(100)->create();
@@ -37,6 +39,15 @@ class itemTest extends TestCase
 
     }
 
+    /*
+    呼叫名為create的API，接受POST請求
+    認定資料庫內要有一筆['content'=>$test_data['content']]的資料
+    回傳伺服器狀態碼為200 ok
+    回傳資料型態為json
+    回傳資料結構是陣列，包含message為名的key
+    回傳資料包含['message'=>'create success.']片段
+    回傳資料筆數為1筆
+    */
     public function test_should_create_a_new_record()
     {
         $test_data = ['content'=>'測試.'];
@@ -52,6 +63,38 @@ class itemTest extends TestCase
         $response->assertJsonStructure(['message']);
 
         $response->assertJsonFragment(['message'=>'create success.']);
+
+        $response->assertJsonCount(1);
+    }
+
+    /*
+    呼叫名為update的API，接受PUT請求
+    認定資料庫內要有一筆['content'=>$test_data['content']]的資料
+    回傳伺服器狀態碼為200 ok
+    回傳資料型態為json
+    回傳資料結構是陣列，包含message為名的key
+    回傳資料包含['message'=>'update success.']片段
+    回傳資料筆數為1筆
+    */
+    public function test_should_update_the_chosen_record()
+    {
+        item::factory(99)->create();
+
+        $test_data = ['content'=>'測試.','id'=>250];
+
+        item::factory()->create(['id'=>$test_data['id']]);
+
+        $response = $this->put('update',$test_data);
+
+        item::where('id','=',$test_data['id'])->update(['content'=>$test_data['content']]);
+
+        $this->assertDatabaseHas('items',['content'=>$test_data['content']]);
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure(['message']);
+
+        $response->assertJsonFragment(['message'=>'update success.']);
 
         $response->assertJsonCount(1);
     }

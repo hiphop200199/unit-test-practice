@@ -19,4 +19,12 @@ class ItemController extends Controller
     item::create(['content'=>$content]);
     return response()->json(['message'=>'create success.']) ;
    }
+
+   public function update(Request $request)
+   {
+    $content = $request->content;
+    $id = $request->id;
+    item::where('id','=',$id)->update(['content'=>$content]);
+    return response()->json(['message'=>'update success.']) ;
+   }
 }
